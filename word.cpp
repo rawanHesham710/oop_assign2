@@ -1,4 +1,4 @@
-#include "game_2.h"
+#include "word.h"
 #include <bits/stdc++.h>
 using namespace std;
 
