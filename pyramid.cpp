@@ -1,7 +1,7 @@
 #include "BoardGame_Classes.h"
 #include "BoardGame_Classes.cpp"
-#include "game_1.h"
-#include "game_1.cpp"
+#include "pyramid.h"
+#include "pyramid.cpp"
 #include <bits/stdc++.h>
 using namespace std;
 
