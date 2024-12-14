@@ -1,4 +1,4 @@
-#include "game_1.h"
+#include "pyramid.h"
 #include <bits/stdc++.h>
 using namespace std;
 
