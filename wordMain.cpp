@@ -1,8 +1,8 @@
 #include <iostream>
 #include "BoardGame_Classes.h"
-#include "game_2.h"
+#include "word.h"
 #include "BoardGame_Classes.cpp"
-#include "game_2.cpp"
+#include "word.cpp"
 
 using namespace std;
 
