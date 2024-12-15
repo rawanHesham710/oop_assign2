@@ -196,10 +196,11 @@ X_O_Player<T>::X_O_Player(string name, T symbol) : Player<T>(name, symbol) {}
 
 template <typename T>
 void X_O_Player<T>::getmove(int& x, int& y) {
+    if(check == 24) {
+        return;
+    }
     while (true) {
-        if(check == 24) {
-            return;
-        }
+
     cout << "\n" << this->name << ", please enter your move x and y (0 to 4) separated by a space: ";
 
         string inputX, inputY;
