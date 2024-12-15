@@ -43,6 +43,7 @@ public:
 
 //--------------------------------------- IMPLEMENTATION
 
+
 #include <iostream>
 #include <iomanip>
 #include <cctype>  // for toupper()
@@ -159,8 +160,30 @@ void m_Player<T>::getmove(int& x, int& y) {
     if(score == 9 || win) {
         return;
     }
-    cout << "\nPlease enter your move x and y (0 to 2) separated by spaces: ";
-    cin >> x >> y;
+
+    cout << "\n" << this->name << ", please enter your move x and y (0 to 2) separated by a space: ";
+
+    while (true) {
+        string inputX, inputY;
+        cin >> inputX >> inputY; // Read input as strings for validation
+
+        // Check if both inputs are digits
+        if (inputX.size() == 1 && inputY.size() == 1 && isdigit(inputX[0]) && isdigit(inputY[0])) {
+            x = inputX[0] - '0'; // Convert character to integer
+            y = inputY[0] - '0';
+
+            // Validate range
+            if (x >= 0 && x <= 2 && y >= 0 && y <= 2) {
+                return; // Valid input, exit the loop
+            }
+            else{
+                cout << "Coordinates must be between 0 and 2. Try again: ";
+            }
+        }
+        else {
+            cout << "Invalid input. Please enter digits between 0 and 2: ";
+        }
+    }
 
 }
 
@@ -174,6 +197,9 @@ m_Random_Player<T>::m_Random_Player(T symbol) : RandomPlayer<T>(symbol) {
 
 template <typename T>
 void m_Random_Player<T>::getmove(int& x, int& y) {
+    if(score == 9 || win) {
+        return;
+    }
     x = rand() % this->dimension;  // Random number between 0 and 2
     y = rand() % this->dimension;
 }
