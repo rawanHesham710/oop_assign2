@@ -1,8 +1,6 @@
 #include <iostream>
 #include "BoardGame_Classes.h"
-#include "word.h"
-#include "BoardGame_Classes.cpp"
-#include "word.cpp"
+#include "word_tic_tac_toe.h"
 
 using namespace std;
 
