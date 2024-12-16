@@ -20,28 +20,29 @@ public:
 template <typename T>
 class Num_X_O_player : public Player<T> {
 public:
-    Num_X_O_player (string name,T Symbol,vector<int> numbers);
+    Num_X_O_player (string name,T Symbol);
     void getmove(int& x, int& y);
-    T getsymbol();
 private:
-    T current_symbol;
-    vector<int> numbers;
+    T current_symbol = 0;
+    T player_symbol = 0;
+
 };
 
 template <typename T>
 class Num_X_O_Random_Player : public RandomPlayer<T>{
 public:
-    Num_X_O_Random_Player (T Symbol,vector<int> numbers);
+    Num_X_O_Random_Player (T Symbol);
     void getmove(int &x, int &y) override;
-    T getsymbol();
 private:
-    T current_symbol;
-    vector<int> numbers;
+    T current_symbol = 0;
+    T player_symbol = 0;
+
 };
 
-
-
-
+template <typename T>
+vector<T> odd_numbers = {1,3,5,7,9};
+template <typename T>
+vector<T> even_numbers = {2,4,6,8};
 
 //--------------------------------------- IMPLEMENTATION
 
@@ -78,8 +79,17 @@ bool Num_X_O_Board<T>::update_board(int x, int y, T mark) {
         else {
             this->n_moves++;
             this->board[x][y] = mark;
-        }
 
+
+            if(mark % 2 == 0) {
+                auto it = find(even_numbers<T>.begin(), even_numbers<T>.end(), mark);
+                even_numbers<T>.erase(it);
+            }
+            else {
+                auto it = find(odd_numbers<T>.begin(), odd_numbers<T>.end(), mark);
+                odd_numbers<T>.erase(it);
+            }
+        }
         return true;
     }
     return false;
@@ -133,33 +143,45 @@ bool Num_X_O_Board<T>::game_is_over() {
 
 // Constructor for Num_X_O_player
 template <typename T>
-Num_X_O_player<T>::Num_X_O_player(string name,T Symbol, vector<int> numbers) : Player<T>(name, Symbol) , current_symbol(Symbol), numbers(numbers) {}
-
-template<typename T>
-T Num_X_O_player<T>::getsymbol() {
-    return this->symbol;
+Num_X_O_player<T>::Num_X_O_player(string name,T Symbol) : Player<T>(name,Symbol){
+    player_symbol = Symbol;
 }
 
 template <typename T>
 void Num_X_O_player<T>::getmove(int& x, int& y) {
         cout << "\n" << this->name << " Please enter your number (1 to 9) from this list: { ";
-        for (int i = 0; i < this->numbers.size(); i++) {
-            cout << this->numbers[i] << " ";
-        }
-        cout << "}";
-        cin >> current_symbol;
-
-        while (
-            find(this->numbers.begin(), this->numbers.end(), current_symbol) == this->numbers.end()) {
-            cout << "\n" << this->name << " invalid Please enter your number (1 to 9) from this list: {";
-            for (int i = 0; i < this->numbers.size(); i++) {
-                cout << this->numbers[i] << ",";
+        if(player_symbol == 1) {
+            for (int i = 0; i < odd_numbers<T>.size(); i++) {
+                cout << odd_numbers<T>[i] << " ";
             }
-            cout << "} ";
+            cout << "}";
             cin >> current_symbol;
+            while (find(odd_numbers<T>.begin(), odd_numbers<T>.end(), current_symbol) == odd_numbers<T>.end()) {
+                cout << "\n" << this->name << " invalid Please enter your number (1 to 9) from this list: {";
+                for (int i = 0; i < odd_numbers<T>.size(); i++) {
+                    cout << odd_numbers<T>[i] << ",";
+                }
+                cout << "} ";
+                cin >> current_symbol;
+            }
+
+        }
+        else {
+            for (int i = 0; i < even_numbers<T>.size(); i++) {
+                cout << even_numbers<T>[i] << " ";
+            }
+            cout << "}";
+            cin >> current_symbol;
+            while (find(even_numbers<T>.begin(), even_numbers<T>.end(), current_symbol) == even_numbers<T>.end()) {
+                cout << "\n" << this->name << " invalid Please enter your number (1 to 9) from this list: {";
+                for (int i = 0; i < even_numbers<T>.size(); i++) {
+                    cout << even_numbers<T>[i] << ",";
+                }
+                cout << "} ";
+                cin >> current_symbol;
+            }
         }
 
-        this->numbers.erase(find(this->numbers.begin(), this->numbers.end(), current_symbol));
         this->symbol = current_symbol;
         cout << "\n"<< this->name <<" Please enter your move x and y (0 to 2) separated by spaces: ";
         cin >> x >> y;
@@ -167,24 +189,29 @@ void Num_X_O_player<T>::getmove(int& x, int& y) {
 
 // Constructor for Num_X_O__Random_Player
 template <typename T>
-Num_X_O_Random_Player<T>::Num_X_O_Random_Player(T Symbol, vector<int> numbers) : RandomPlayer<T>(Symbol), numbers(numbers) {
+Num_X_O_Random_Player<T>::Num_X_O_Random_Player(T Symbol) : RandomPlayer<T>(Symbol) {
+
     this->dimension = 3;
     this->name = "Random Computer Player";
     srand(static_cast<unsigned int>(time(0)));
+    player_symbol = Symbol;
 }
 
 template <typename T>
 void Num_X_O_Random_Player<T>::getmove(int& x, int& y) {
-    current_symbol = rand() % 10;
 
-    while (find(this->numbers.begin(), this->numbers.end(), current_symbol) == this->numbers.end()) {
-        current_symbol = rand() % 10;
-    }
     x = rand() % this->dimension;
     y = rand() % this->dimension;
-    this->symbol = current_symbol;
-    this->numbers.erase(find(this->numbers.begin(), this->numbers.end(), current_symbol));
-    cout << "the computer played the number " << this->symbol << "in the cell (" << x << "," << y << ")" << endl;
+    if(player_symbol == 1) {
+        int currentIndex = rand() % odd_numbers<T>.size();
+        current_symbol = odd_numbers<T>[currentIndex];
+    }
+    else {
+        int currentIndex = rand() % even_numbers<T>.size();
+        current_symbol = even_numbers<T>[currentIndex];
+    }
 
+    this->symbol = current_symbol;
+    cout << "the computer played the number " << this->symbol << "in the cell (" << x << "," << y << ")" << endl;
 }
 #endif //NUM_TIC_TAC_TOE_H
