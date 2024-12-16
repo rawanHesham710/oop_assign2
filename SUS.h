@@ -2,6 +2,8 @@
 #define _3X3X_O_H
 
 #include "BoardGame_Classes.h"
+int counter = 0;
+char check = ' ';
 
 template <typename T>
 class SUS_Board:public Board<T> {
@@ -12,8 +14,11 @@ public:
     bool is_win() ;
     bool is_draw();
     bool game_is_over();
-    bool check_sus_sequence(T symbol);
-    bool check_Win(T symbol);
+    void check_Win(T symbol);
+private:
+    bool row_count[3] = {false, false, false};
+    bool col_count[3] = {false, false, false};
+    bool dig_count[2] = {false, false};
     int S_count;
     int U_count;
 };
@@ -54,17 +59,15 @@ SUS_Board<T>::SUS_Board() {
 
 template <typename T>
 bool SUS_Board<T>::update_board(int x, int y, T symbol) {
+    check = symbol;
+    if(this->n_moves == 9){
+        this->n_moves++;
+        return true;
+    }
     if (x >= 0 && x < this->rows && y >= 0 && y < this->columns && this->board[x][y] == 0) {
         this->board[x][y] = toupper(symbol);
         this->n_moves++;
-        
-        if (check_sus_sequence(symbol)) {
-            if (symbol == 'S') {
-                S_count++;
-            } else if (symbol == 'U') {
-                U_count++;
-            }
-        }
+        counter++;
         return true;
     }
     return false;
@@ -85,59 +88,89 @@ void SUS_Board<T>::display_board() {
 
 // Checks for "SUS" sequences
 template <typename T>
-bool SUS_Board<T>::check_Win(T symbol) {
+void SUS_Board<T>::check_Win(T symbol) {
     string word;
     for (int i = 0; i < this->rows; i++) {
+        if(!row_count[i]){
         word = "";
         for (int j = 0; j < this->columns; j++) {
             word += this->board[i][j];
         }
-        if (word == "SUS") {
-            return true;
+        if (word == "SUS" && symbol == 'S') {
+            S_count++;
+            cout << " s counter" << S_count << endl;
+            row_count[i] = true;
+        }
+        if (word == "SUS" && symbol == 'U') {
+            U_count++;
+            cout << " u counter" << U_count << endl;
+            row_count[i] = true;
+        }
         }
     }
-    
+
     for (int j = 0; j < this->columns; j++) {
-        word = "";
-        for (int i = 0; i < this->rows; i++) {
-            word += this->board[i][j];
-        }
-        if (word == "SUS") {
-            return true;
+        if(!col_count[j]){
+            word = "";
+            for (int i = 0; i < this->rows; i++) {
+                word += this->board[i][j];
+            }
+            if (word == "SUS" && symbol == 'S') {
+                S_count++;
+                cout << " s counter" << S_count << endl;
+                col_count[j] = true;
+            }
+            if (word == "SUS" && symbol == 'U') {
+                U_count++;
+                cout << " u counter" << U_count << endl;
+                col_count[j] = true;
+            }
         }
     }
 
     word = "";
-    for (int i = 0; i < this->rows; i++) {
-        word += this->board[i][i];
-    }
-    if (word == "SUS") {
-        return true;
+    word += this->board[0][0];
+    word += this->board[1][1];
+    word += this->board[2][2];
+    if(!dig_count[0]){
+        if (word == "SUS" && symbol == 'S') {
+            S_count++;
+            cout << " s counter" << S_count << endl;
+            dig_count[0] = true;
+        }
+        if (word == "SUS" && symbol == 'U') {
+            U_count++;
+            cout << " u counter" << U_count << endl;
+            dig_count[0] = true;
+        }
     }
 
     word = "";
-    for (int i = 0; i < this->rows; i++) {
-        word += this->board[i][this->columns - i - 1];
+    word += this->board[0][2];
+    word += this->board[1][1];
+    word += this->board[2][0];
+    if(!dig_count[1]){
+        if (word == "SUS" && symbol == 'S') {
+            S_count++;
+            cout << " s counter" << S_count << endl;
+            dig_count[1] = true;
+        }
+        if (word == "SUS" && symbol == 'U') {
+            U_count++;
+            cout << " u counter" << U_count << endl;
+            dig_count[1] = true;
+        }
     }
-    if (word == "SUS") {
-        return true;
-    }
-
-    return false;
-}
-
-template <typename T>
-bool SUS_Board<T>::check_sus_sequence(T symbol) {
-    return check_Win(symbol);
 }
 
 template <typename T>
 bool SUS_Board<T>::is_win() {
+    check_Win(check);
     if (this->n_moves == 9 && S_count > U_count) {
         return true;
     }
 
-    if (this->n_moves == 9 && U_count > S_count) {
+    if (this->n_moves == 10 && U_count > S_count) {
         return true;
     }
     return false;
@@ -145,12 +178,12 @@ bool SUS_Board<T>::is_win() {
 
 template <typename T>
 bool SUS_Board<T>::is_draw() {
-    return (this->n_moves == 9 && is_win() );
+    return (this->n_moves == 10 && !is_win() );
 }
 
 template <typename T>
 bool SUS_Board<T>::game_is_over() {
-    return is_win() || is_draw();
+    return this->n_moves > 10;
 }
 
 //--------------------------------------
@@ -161,6 +194,9 @@ SUS_Player<T>::SUS_Player(string name, T symbol) : Player<T>(name, symbol) {}
 
 template <typename T>
 void SUS_Player<T>::getmove(int& x, int& y) {
+    if(counter == 9)
+        return;
+
     cout << "\nPlease enter your move x and y (0 to 2) separated by spaces: ";
     cin >> x >> y;
 }

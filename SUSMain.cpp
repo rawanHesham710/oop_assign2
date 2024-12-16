@@ -11,7 +11,6 @@ int main() {
     string player1Name, player2Name;
 
     cout << "Welcome to Word Tic-Tac-Toe Game! :)\n";
-
     cout << "Enter Player 1 name: ";
     cin >> player1Name;
     cout << "Choose Player 1 type:\n";
@@ -38,6 +37,7 @@ int main() {
     cout << "1. Human\n";
     cout << "2. Random Computer\n";
     cin >> choice;
+
 
     switch (choice) {
         case 1:
